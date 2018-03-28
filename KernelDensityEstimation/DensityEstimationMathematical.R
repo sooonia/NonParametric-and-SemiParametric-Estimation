@@ -3,15 +3,11 @@ source('Helper.R')
 
 # generate test distributions
 # need to figure out how to get true pdf
-norm1 <- rnorm(500, 15, 2)
-norm2 <- rnorm(500, 3, 2)
-d1 <- c(norm1, norm2)
-d2 <- rnorm(1000, 10, 2)
-#norm3 <- rnorm(200, 1, 1)
-#norm4 <- rnorm(200, 1, 7)
-#norm5 <- rnorm(200, 6, 4)
-chisq1 <- rnorm(1000, 4, 2) * rnorm(1000, 1, 7)
-d3 <- chisq1
+#d1 <- samplepdf(1000, pdf1)
+n= 100
+d1 <- rchisq(n, 2)
+d2 <- rnorm(n, 10, 2)
+d3 <- rbeta(n, .5, .5)
 
 plot(density(d1))
 plot(density(d2))
@@ -49,21 +45,21 @@ results <- rbind(results, data.frame(density = 'd3', bandwidth= dpik(d3, kernel 
 
 
 # Cross Validation
-CV.results <- data.frame(h=double(), CV = double(), density = factor())
-# very slow run time!!
-for(h in seq(from=.05,to=1.5, by=.05)){
-  CV.results = rbind(CV.results, data.frame(h = h, CV = CV(h, d1), density = d1 ))
+CV.results <- data.frame(bw=double(), CV = double(), density = factor())
+# sped up runtime --> O(n^2)
+for(h in seq(from=.05,to=2.5, by=.3)){
+  CV.results = rbind(CV.results, data.frame(bw = h, CV = CV(h, d1), density = d1 ))
 }
-plot(CV.results)
+plot(CV.results[,c(1,2)])
 
 # Choosing Kernel
 # change to canonical
 plot(density(d1, bw = dpik(d1, kernel = 'epanech', canonical = TRUE), kernel = 'epanechnikov'), 
      main=paste('Density 1' ,'\nKernel= epanechnikov'))
+
 plot(density(d1, bw = dpik(d1, kernel = 'box', canonical = TRUE), kernel = 'rectangular'),
      main=paste('Density 1' ,'\nKernel= uniform'))
-plot(density(d1, bw = dpik(d1, kernel = 'triweight', canonical = TRUE), kernel = 'triangular'), 
-     main=paste('Density 1' ,'\nKernel= triweight'))
+
 plot(density(d1, bw = dpik(d1, kernel = 'normal', canonical = TRUE), kernel = 'gaussian'),
      main=paste('Density 1' ,'\nKernel= gaussian'))
 plot(density(d1, bw = dpik(d1, kernel = 'biweight', canonical = TRUE), kernel = 'biweight'), 
