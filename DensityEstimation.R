@@ -1,7 +1,7 @@
 # generate data
 norm1 <- rnorm(500, 10, 2)
 norm2 <- rnorm(500, 3, 2)
-nonnorm <- c(norm1, norm2)
+nonnorm <- rbeta(1000, .5, .5)
 
 
 # estimate density with histogram using different bin sizes
@@ -28,7 +28,7 @@ for(b in c(.1, .5, 1, 5, 10)){
   plot(density(nonnorm, bw = b, kernel = 'triangular'), main=paste(paste('bandwidth=',b),'\nKernel= triangular'))
 }
 
-for(b in c(.1, .5, 1, 5, 10)){
+for(b in c(.01, .025, .05, .1, .5, 1)){
   plot(density(nonnorm, bw = b, kernel = 'epanechnikov'), main=paste(paste('bandwidth=',b),'\nKernel= epanechnikov'))
 }
 

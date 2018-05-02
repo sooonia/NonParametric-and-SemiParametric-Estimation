@@ -9,16 +9,17 @@ d1 <- rchisq(n, 2)
 d2 <- rnorm(n, 10, 2)
 d3 <- rbeta(n, .5, .5)
 
-plot(density(d1))
-plot(density(d2))
-plot(density(d3))
+#plot true pdfs
+x <- seq(-.5, 1.5, length=500)
+hx <- dbeta(x,2,5)
+plot(x, hx, type="l", lty=1, ylab="Density", main="True PDF of Beta(2, 5)")
 
 results <- data.frame(density = factor(), bandwidth = double(), method = factor())
 
 # Silverman's Rule of Thumb
-plot(Silverman(d1), main=paste('Silverman\'s Better Rule of Thumb', '\nDensity 1'))
-plot(Silverman(d2), main=paste('Silverman\'s Better Rule of Thumb', '\nDensity 2'))
-plot(Silverman(d3), main=paste('Silverman\'s Better Rule of Thumb', '\nDensity 3'))
+plot(Silverman(d1), main=paste('Silverman\'s Better Rule of Thumb','\nChiSq(2)'))
+plot(Silverman(d2), main=paste('Silverman\'s Better Rule of Thumb', '\nNormal(10, 2)'))
+plot(Silverman(d3), main=paste('Silverman\'s Better Rule of Thumb', '\nBeta(1/2, 1/2'))
 
 results <- rbind(results, data.frame(density = 'd1', bandwidth= Silverman(d1)$bw, 
                                      method = 'Silverman'))
@@ -29,7 +30,7 @@ results <- rbind(results, data.frame(density = 'd3', bandwidth= Silverman(d3)$bw
 
 # Plug in
 plot(density(d1, bw = dpik(d1, kernel = 'epanech'), kernel = 'epanechnikov'), 
-     main=paste('Refined Plug in Method', '\nDensity 1'))
+     main=paste('Refined Plug in Method', '\nChiSq(2)'))
 plot(density(d2, bw = dpik(d2, kernel = 'epanech'), kernel = 'epanechnikov'), 
      main=paste('Refined Plug in Method', '\nDensity 2'))
 plot(density(d3, bw = dpik(d3, kernel = 'epanech'), kernel = 'epanechnikov'), 
@@ -47,10 +48,13 @@ results <- rbind(results, data.frame(density = 'd3', bandwidth= dpik(d3, kernel 
 # Cross Validation
 CV.results <- data.frame(bw=double(), CV = double(), density = factor())
 # sped up runtime --> O(n^2)
-for(h in seq(from=.05,to=2.5, by=.3)){
+for(h in seq(from=.6,to=.85, by=.025)){
   CV.results = rbind(CV.results, data.frame(bw = h, CV = CV(h, d1), density = d1 ))
 }
-plot(CV.results[,c(1,2)])
+plot(CV.results[,c(1,2)], main="CV Results\nChiSq(2), n=5000")
+cv <- CV.results[which(CV.results$CV == min(CV.results$CV)) , 1]
+plot(density(d1, bw = cv[1], kernel = 'epanechnikov'), 
+     main=paste('CV', '\nChiSq(2)'))
 
 # Choosing Kernel
 # change to canonical

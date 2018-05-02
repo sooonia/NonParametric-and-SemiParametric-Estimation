@@ -1,5 +1,6 @@
 # Silverman's Rule of Thumb Functions
 Silverman <- function(obs, n=10000, ker = 'epanechnikov'){
+  n = length(obs)
   s <- summary(obs)
   iqr <- as.numeric(s[5] - s[2])
   use <- min(c(iqr/1.34, sd(obs)))
@@ -66,9 +67,9 @@ get.f.hat.ep.c <- function(bw, data, x){
   n = length(data)
   sum = 0
   for(obs in data){
-    sum = sum + 1.7188*ep.kernel((x-obs)/bw)
+    sum = sum + ep.kernel((x-obs)/(bw *(1.7188/0.7764)))
   }
-  return(sum/(n*bw))
+  return(sum/(n*bw*(1.7188/0.7764)))
 }
 
 #Uniform
@@ -83,9 +84,9 @@ get.f.hat.unif.c <- function(bw, data, x){
   n = length(data)
   sum = 0
   for(obs in data){
-    sum = sum + 1.351*unif.kernel((x-obs)/bw)
+    sum = sum + unif.kernel((x-obs)/bw * (1.3510/0.7764))
   }
-  return(sum/(n*bw))
+  return(sum/(n*bw*1.3510/0.7764))
 }
 
 # Triweight
@@ -100,9 +101,9 @@ get.f.hat.triw.c <- function(bw, data, x){
   n = length(data)
   sum = 0
   for(obs in data){
-    sum = sum + 2.3122*triw.kernel((x-obs)/bw)
+    sum = sum + triw.kernel((x-obs)/(bw*2.3122/0.7764))
   }
-  return(sum/(n*bw))
+  return(sum/(n*bw*2.3122/0.7764))
 }
 
 # Quartic
@@ -117,9 +118,9 @@ get.f.hat.quart.c <- function(bw, data, x){
   n = length(data)
   sum = 0
   for(obs in data){
-    sum = sum + 2.0362*quart.kernel((x-obs)/bw)
+    sum = sum + quart.kernel((x-obs)/(bw*2.0362/0.7764))
   }
-  return(sum/(n*bw))
+  return(sum/(n*bw*2.0362/0.7764))
 }
 
 
@@ -132,7 +133,7 @@ get.f.hat.gauss.c <- function(bw, data, x){
   n = length(data)
   sum = 0
   for(obs in data){
-    sum = sum + 0.7764*gauss.kernel((x-obs)/bw)
+    sum = sum + gauss.kernel((x-obs)/bw)
   }
   return(sum/(n*bw))
 }
@@ -153,6 +154,7 @@ get.true.f <- function(d_name, x, para){
     return(dbeta(x, alpha, beta))
   }
   else{return('error: d_name not valid')}
+  
 }
 
 
